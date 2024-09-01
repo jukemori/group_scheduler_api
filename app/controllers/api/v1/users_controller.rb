@@ -7,8 +7,12 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    render json: @user
-    end
+    render json: @user.to_json(include: {
+      calendars: {
+        include: :events
+      }
+    })
+  end
 
   def create
     @user = User.new(user_params)

@@ -11,10 +11,18 @@ class Api::V1::EventsController < ApplicationController
 
   private
 
-  # Method to fetch all events (similar to your getData in Node.js)
   def fetch_events
-    events = Event.all
-    render json: events
+    if params[:StartDate].present? && params[:EndDate].present?
+      start_date = params[:StartDate]
+      end_date = params[:EndDate]
+      events = Event.where("start_time >= ? AND end_time <= ?", start_date, end_date)
+    else
+      events = Event.all 
+    end
+
+    transformed_events = events.map { |event| transform_event_keys(event) }
+    Rails.logger.info("Transformed Events: #{transformed_events}")
+    render json: transformed_events
   rescue => e
     render json: { message: e.message || "Some error occurred while retrieving Events." }, status: 500
   end
@@ -56,5 +64,18 @@ class Api::V1::EventsController < ApplicationController
         end
       end
     end
+  end
+
+  def transform_event_keys(event)
+    event_hash = event.attributes
+
+    transformed_event = {}
+
+    event_hash.each do |key, value|
+      new_key = key.split('_').map(&:capitalize).join
+      transformed_event[new_key] = value
+    end
+
+    transformed_event
   end
 end

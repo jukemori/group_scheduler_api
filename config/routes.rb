@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users
       resources :calendars
-      resources :events
+      post 'events', to: 'events#crud_actions'
     end
   end
 

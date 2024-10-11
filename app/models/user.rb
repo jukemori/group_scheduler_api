@@ -5,6 +5,7 @@ class User < ApplicationRecord
   include DeviseTokenAuth::Concerns::User
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+  before_create :skip_confirmation!       
   
   has_and_belongs_to_many :calendars
   has_many :events, foreign_key: 'user_id'

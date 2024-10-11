@@ -17,8 +17,24 @@ Calendar.destroy_all
 
 # Create Users
 users = User.create!([
-  { name: 'John Doe', nickname: 'john', email: 'john@example.com', password: 'password', password_confirmation: 'password' },
-  { name: 'Jane Doe', nickname: 'jane', email: 'jane@example.com', password: 'password', password_confirmation: 'password' }
+  { 
+    name: 'John Doe', 
+    nickname: 'john', 
+    email: 'john@example.com', 
+    password: 'password', 
+    password_confirmation: 'password',
+    uid: 'john@example.com',  
+    provider: 'email'         
+  },
+  { 
+    name: 'Jane Doe', 
+    nickname: 'jane', 
+    email: 'jane@example.com', 
+    password: 'password', 
+    password_confirmation: 'password',
+    uid: 'jane@example.com',  
+    provider: 'email'         
+  }
 ])
 
 # Create Calendars
@@ -33,7 +49,7 @@ users.each do |user|
 end
 
 # Create Events
-events = Event.create!([
+Event.create!([
   { subject: 'Meeting with client', description: 'Discuss project requirements', start_time: '2024-09-05 09:00:00', end_time: '2024-09-05 10:00:00', user: users.first, calendar: calendars.first },
   { subject: 'Lunch with Jane', description: 'Lunch at favorite restaurant', start_time: '2024-09-06 12:00:00', end_time: '2024-09-06 13:00:00', user: users.second, calendar: calendars.second }
 ])

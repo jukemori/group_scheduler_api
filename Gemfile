@@ -48,3 +48,5 @@ end
 
 gem "devise", "~> 4.9"
 gem "devise-api", "~> 0.1.3"
+gem 'devise_token_auth'
+gem 'omniauth', '~> 2.0'

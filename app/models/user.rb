@@ -1,8 +1,10 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  extend Devise::Models
+  include DeviseTokenAuth::Concerns::User
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :api
+         :recoverable, :rememberable, :validatable
   
   has_and_belongs_to_many :calendars
   has_many :events, foreign_key: 'user_id'

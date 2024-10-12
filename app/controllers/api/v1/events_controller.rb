@@ -32,11 +32,15 @@ class Api::V1::EventsController < ApplicationController
     # Create new events
     if params[:added].present?
       params[:added].each do |event_data|
-        event = Event.new(event_data.permit(:user_id, :calendar_id, :event_data_attributes)) # Adjust strong params
+        transformed_data = transform_keys_to_snake_case(event_data)
+        event = Event.new(event_params(transformed_data))
+        event.user_id = transformed_data['user_id'] || current_user.id 
+        event.calendar_id = transformed_data['calendar_id'] || default_calendar_id 
         if event.save
           render json: event
         else
-          render json: { message: "Some error occurred while inserting the event." }, status: 500
+          render json: { message: "Error creating event: #{event.errors.full_messages.join(', ')}" }, status: :unprocessable_entity
+          return
         end
       end
     end
@@ -44,11 +48,15 @@ class Api::V1::EventsController < ApplicationController
     # Update existing events
     if params[:changed].present?
       params[:changed].each do |event_data|
-        event = Event.find_by(id: event_data[:id])
-        if event&.update(event_data.permit(:user_id, :calendar_id, :event_data_attributes))
+        transformed_data = transform_keys_to_snake_case(event_data)
+        event = Event.find_by(id: transformed_data[:id])
+        if event&.update(event_params(transformed_data))
+
+          event.save
           render json: event
         else
-          render json: { message: "Cannot update Event with id=#{event_data[:id]}" }, status: 500
+          render json: { message: "Cannot update Event with id=#{transformed_data[:id]}" }, status: :unprocessable_entity
+          return
         end
       end
     end
@@ -56,7 +64,9 @@ class Api::V1::EventsController < ApplicationController
     # Delete events
     if params[:deleted].present?
       params[:deleted].each do |event_data|
-        event = Event.find_by(id: event_data[:id])
+        transformed_data = transform_keys_to_snake_case(event_data)
+        event_id = transformed_data[:id] || transformed_data['id']
+        event = Event.find_by(id: event_id)
         if event&.destroy
           render json: event
         else
@@ -64,6 +74,14 @@ class Api::V1::EventsController < ApplicationController
         end
       end
     end
+  end
+
+  def event_params(params)
+    params.except(:id).permit(
+      :subject, :description, :start_time, :end_time, :start_timezone, :end_timezone,
+      :is_all_day, :is_block, :is_readonly, :location, :recurrence_rule,
+      :recurrence_exception, :recurrence_id, :following_id, :user_id, :calendar_id
+    )
   end
 
   def transform_event_keys(event)
@@ -78,4 +96,16 @@ class Api::V1::EventsController < ApplicationController
 
     transformed_event
   end
+
+  def transform_keys_to_snake_case(hash)
+    hash.deep_transform_keys do |key| 
+      key = key.to_s.underscore
+      key == 'owner_id' ? 'user_id' : key
+    end
+  end
+
+  def default_calendar_id
+    current_user.calendars.first&.id if current_user
+  end
+  
 end

@@ -12,12 +12,14 @@ class Api::V1::EventsController < ApplicationController
   private
 
   def fetch_events
+    calendar_id = request.headers['calendar-id']
+    
+    events = Event.where(calendar_id: calendar_id)
+
     if params[:StartDate].present? && params[:EndDate].present?
       start_date = params[:StartDate]
       end_date = params[:EndDate]
-      events = Event.where("start_time >= ? AND end_time <= ?", start_date, end_date)
-    else
-      events = Event.all 
+      events = events.where("start_time >= ? AND end_time <= ?", start_date, end_date)
     end
 
     transformed_events = events.map { |event| transform_event_keys(event) }
@@ -35,7 +37,7 @@ class Api::V1::EventsController < ApplicationController
         transformed_data = transform_keys_to_snake_case(event_data)
         event = Event.new(event_params(transformed_data))
         event.user_id = transformed_data['user_id'] || current_user.id 
-        event.calendar_id = transformed_data['calendar_id'] || default_calendar_id 
+        event.calendar_id = request.headers['calendar-id'] || transformed_data['calendar_id'] 
         if event.save
           render json: event
         else
@@ -102,10 +104,6 @@ class Api::V1::EventsController < ApplicationController
       key = key.to_s.underscore
       key == 'owner_id' ? 'user_id' : key
     end
-  end
-
-  def default_calendar_id
-    current_user.calendars.first&.id if current_user
   end
   
 end

@@ -1,5 +1,7 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :set_user, only: [:show, :update, :destroy]
+  include DeviseTokenAuth::Concerns::SetUserByToken
+  before_action :authenticate_user!, except: [:create]
+  before_action :set_user, only: [:update, :destroy]
 
   def index
     @users = User.all
@@ -7,7 +9,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    render json: @user.to_json(include: {
+    render json: current_user.to_json(include: {
       calendars: {
         include: :events
       }
@@ -44,5 +46,9 @@ class Api::V1::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :nickname, :color, :email, :password, :password_confirmation)
+  end
+
+  def authenticate_user!
+    render json: { error: 'Unauthorized' }, status: :unauthorized unless current_user
   end
 end

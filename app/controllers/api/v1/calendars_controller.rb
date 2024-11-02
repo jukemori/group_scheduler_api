@@ -13,8 +13,9 @@ class Api::V1::CalendarsController < ApplicationController
   end
 
   def create
-    @calendar = current_user.calendars.build(calendar_params)
+    @calendar = Calendar.new(calendar_params)
     if @calendar.save
+      @calendar.users << current_user
       render json: @calendar, status: :created
     else
       render json: @calendar.errors, status: :unprocessable_entity

@@ -1,8 +1,10 @@
 class Api::V1::CalendarsController < ApplicationController
+  include DeviseTokenAuth::Concerns::SetUserByToken
+  before_action :authenticate_user!
   before_action :set_calendar, only: [:show, :update, :destroy]
 
   def index
-    @calendars = Calendar.all
+    @calendars = current_user.calendars
     render json: @calendars
   end
 
@@ -11,7 +13,7 @@ class Api::V1::CalendarsController < ApplicationController
   end
 
   def create
-    @calendar = Calendar.new(calendar_params)
+    @calendar = current_user.calendars.build(calendar_params)
     if @calendar.save
       render json: @calendar, status: :created
     else
@@ -35,7 +37,7 @@ class Api::V1::CalendarsController < ApplicationController
   private
 
   def set_calendar
-    @calendar = Calendar.find(params[:id])
+    @calendar = current_user.calendars.find(params[:id])
   end
 
   def calendar_params

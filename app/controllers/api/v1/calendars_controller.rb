@@ -35,6 +35,25 @@ class Api::V1::CalendarsController < ApplicationController
     head :no_content
   end
 
+  def invite
+    @user = User.find_by(email: params[:email])
+    
+    if @user.nil?
+      render json: { error: 'User not found' }, status: :not_found
+      return
+    end
+
+    if @calendar.users.include?(@user)
+      render json: { error: 'User is already a member of this calendar' }, status: :unprocessable_entity
+      return
+    end
+
+    @calendar.users << @user
+    render json: { message: 'User successfully invited to calendar' }, status: :ok
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
   private
 
   def set_calendar

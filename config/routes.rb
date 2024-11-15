@@ -7,6 +7,8 @@ Rails.application.routes.draw do
       resources :calendars do
         member do
           post :invite
+          post :accept_invitation
+          post :reject_invitation
         end
       end
       post 'events', to: 'events#crud_actions'

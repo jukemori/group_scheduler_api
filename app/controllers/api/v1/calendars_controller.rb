@@ -1,7 +1,7 @@
 class Api::V1::CalendarsController < ApplicationController
   include DeviseTokenAuth::Concerns::SetUserByToken
   before_action :authenticate_user!
-  before_action :set_calendar, only: [:show, :update, :destroy]
+  before_action :set_calendar, only: [:show, :update, :destroy, :invite]
 
   def index
     @calendars = current_user.calendars
@@ -48,8 +48,55 @@ class Api::V1::CalendarsController < ApplicationController
       return
     end
 
-    @calendar.users << @user
-    render json: { message: 'User successfully invited to calendar' }, status: :ok
+    invitation = @calendar.calendar_invitations.new(user: @user)
+    
+    if invitation.save
+      render json: { message: 'Invitation sent successfully' }, status: :ok
+    else
+      render json: { error: invitation.errors.full_messages }, status: :unprocessable_entity
+    end
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def accept_invitation
+    invitation = current_user.calendar_invitations.find_by(calendar_id: params[:id])
+    
+    if invitation.nil?
+      render json: { error: 'Invitation not found' }, status: :not_found
+      return
+    end
+
+    if invitation.accepted?
+      render json: { error: 'Invitation already accepted' }, status: :unprocessable_entity
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      invitation.accepted!
+      @calendar.users << current_user
+    end
+
+    render json: { message: 'Calendar invitation accepted' }, status: :ok
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def reject_invitation
+    invitation = current_user.calendar_invitations.find_by(calendar_id: params[:id])
+    
+    if invitation.nil?
+      render json: { error: 'Invitation not found' }, status: :not_found
+      return
+    end
+
+    if invitation.rejected?
+      render json: { error: 'Invitation already rejected' }, status: :unprocessable_entity
+      return
+    end
+
+    invitation.rejected!
+    render json: { message: 'Calendar invitation rejected' }, status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
   end

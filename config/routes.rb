@@ -11,6 +11,7 @@ Rails.application.routes.draw do
           post :reject_invitation
         end
       end
+      resources :calendar_invitations, only: [:index]
       post 'events', to: 'events#crud_actions'
       get 'user', to: 'users#show'
     end

@@ -36,7 +36,7 @@ class Api::V1::CalendarsController < ApplicationController
   end
 
   def invite
-    @user = User.find_by(email: params[:email])
+    @user = User.find_by(email: calendar_params[:email])
     
     if @user.nil?
       render json: { error: 'User not found' }, status: :not_found
@@ -108,7 +108,7 @@ class Api::V1::CalendarsController < ApplicationController
   end
 
   def calendar_params
-    params.require(:calendar).permit(:name, :description)
+    params.require(:calendar).permit(:name, :description, :email)
   end
 
 end

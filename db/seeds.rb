@@ -38,21 +38,81 @@ users = User.create!([
 ])
 
 # Create Calendars
-calendars = Calendar.create!([
+john_calendars = Calendar.create!([
   { name: 'Work Calendar', description: 'Calendar for work-related events' },
-  { name: 'Personal Calendar', description: 'Calendar for personal events' }
+  { name: 'Personal Calendar', description: 'Calendar for personal events' },
+  { name: 'Family Calendar', description: 'Calendar for family events' }
+])
+
+jane_calendars = Calendar.create!([
+  { name: 'Study Calendar', description: 'Calendar for study schedule' },
+  { name: 'Fitness Calendar', description: 'Calendar for workout routine' },
+  { name: 'Social Calendar', description: 'Calendar for social events' }
 ])
 
 # Link Users to Calendars
-users.each do |user|
-  user.calendars << calendars.sample
+users.first.calendars << john_calendars
+users.second.calendars << jane_calendars
+
+# Create Events for John
+john_calendars.each do |calendar|
+  Event.create!([
+    { 
+      subject: 'Morning Meeting', 
+      description: 'Daily standup', 
+      start_time: '2024-11-01T09:00:00.000Z',
+      end_time: '2024-11-01T10:00:00.000Z',
+      user: users.first, 
+      calendar: calendar 
+    },
+    { 
+      subject: 'Project Review', 
+      description: 'Monthly review', 
+      start_time: '2024-11-15T14:00:00.000Z',
+      end_time: '2024-11-15T16:00:00.000Z',
+      user: users.first, 
+      calendar: calendar 
+    },
+    { 
+      subject: 'Team Building', 
+      description: 'Team activity', 
+      start_time: '2024-11-20T13:00:00.000Z',
+      end_time: '2024-11-20T17:00:00.000Z',
+      user: users.first, 
+      calendar: calendar 
+    }
+  ])
 end
 
-# Create Events
-Event.create!([
-  { subject: 'Meeting with client', description: 'Discuss project requirements', start_time: '2024-09-05 09:00:00', end_time: '2024-09-05 10:00:00', user: users.first, calendar: calendars.first },
-  { subject: 'Lunch with Jane', description: 'Lunch at favorite restaurant', start_time: '2024-09-06 12:00:00', end_time: '2024-09-06 13:00:00', user: users.second, calendar: calendars.second }
-])
+# Create Events for Jane
+jane_calendars.each do |calendar|
+  Event.create!([
+    { 
+      subject: 'Study Session', 
+      description: 'React basics', 
+      start_time: '2024-11-05T10:00:00.000Z',
+      end_time: '2024-11-05T12:00:00.000Z',
+      user: users.second, 
+      calendar: calendar 
+    },
+    { 
+      subject: 'Gym Session', 
+      description: 'Cardio day', 
+      start_time: '2024-11-10T07:00:00.000Z',
+      end_time: '2024-11-10T09:00:00.000Z',
+      user: users.second, 
+      calendar: calendar 
+    },
+    { 
+      subject: 'Coffee Meetup', 
+      description: 'Networking event', 
+      start_time: '2024-11-25T15:00:00.000Z',
+      end_time: '2024-11-25T16:30:00.000Z',
+      user: users.second, 
+      calendar: calendar 
+    }
+  ])
+end
 
 # Output counts of created records
 puts "Created #{User.count} users"

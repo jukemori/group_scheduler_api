@@ -96,6 +96,8 @@ class Api::V1::EventsController < ApplicationController
       transformed_event[new_key] = value
     end
 
+    transformed_event['OwnerId'] = transformed_event['UserId']
+
     transformed_event
   end
 

@@ -24,7 +24,8 @@ users = User.create!([
     password: 'password', 
     password_confirmation: 'password',
     uid: 'john@example.com',  
-    provider: 'email'         
+    provider: 'email',
+    color: '#FF5733'  
   },
   { 
     name: 'Jane Doe', 
@@ -33,7 +34,8 @@ users = User.create!([
     password: 'password', 
     password_confirmation: 'password',
     uid: 'jane@example.com',  
-    provider: 'email'         
+    provider: 'email',
+    color: '#33FF57' 
   }
 ])
 

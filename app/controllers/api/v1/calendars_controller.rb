@@ -48,7 +48,10 @@ class Api::V1::CalendarsController < ApplicationController
       return
     end
 
-    invitation = @calendar.calendar_invitations.new(user: @user)
+    invitation = @calendar.calendar_invitations.new(
+      user: @user,
+      status: :pending
+    )
     
     if invitation.save
       render json: { message: 'Invitation sent successfully' }, status: :ok
@@ -73,8 +76,8 @@ class Api::V1::CalendarsController < ApplicationController
     end
 
     ActiveRecord::Base.transaction do
-      invitation.accepted!
-      @calendar.users << current_user
+      invitation.update!(status: :accepted)
+      invitation.calendar.users << current_user unless invitation.calendar.users.include?(current_user)
     end
 
     render json: { message: 'Calendar invitation accepted' }, status: :ok

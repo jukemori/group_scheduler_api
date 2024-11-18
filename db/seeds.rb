@@ -14,6 +14,7 @@
 Event.destroy_all
 User.destroy_all
 Calendar.destroy_all
+CalendarNote.destroy_all
 
 # Create Users
 users = User.create!([
@@ -116,8 +117,41 @@ jane_calendars.each do |calendar|
   ])
 end
 
-# Output counts of created records
+# Create Notes for John's calendars
+john_calendars.each do |calendar|
+  CalendarNote.create!([
+    {
+      content: "Important meeting notes for Q4 planning",
+      user: users.first,
+      calendar: calendar
+    },
+    {
+      content: "Remember to prepare presentation slides",
+      user: users.first,
+      calendar: calendar
+    }
+  ])
+end
+
+# Create Notes for Jane's calendars
+jane_calendars.each do |calendar|
+  CalendarNote.create!([
+    {
+      content: "Study group meeting scheduled for next week",
+      user: users.second,
+      calendar: calendar
+    },
+    {
+      content: "Don't forget to bring workout gear",
+      user: users.second,
+      calendar: calendar
+    }
+  ])
+end
+
+# Update the final output to include notes count
 puts "Created #{User.count} users"
 puts "Created #{Calendar.count} calendars"
 puts "Created #{Event.count} events"
+puts "Created #{CalendarNote.count} notes"
 puts "Created #{Calendar.joins(:users).count} calendar-user associations"

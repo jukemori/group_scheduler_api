@@ -104,6 +104,19 @@ class Api::V1::CalendarsController < ApplicationController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  def users
+    @calendar = Calendar.find(params[:id])
+    users_data = @calendar.users.map do |user|
+      {
+        OwnerText: user.nickname,
+        Id: user.id,
+        OwnerColor: user.color 
+      }
+    end
+    
+    render json: users_data
+  end
+
   private
 
   def set_calendar
@@ -112,6 +125,10 @@ class Api::V1::CalendarsController < ApplicationController
 
   def calendar_params
     params.require(:calendar).permit(:name, :description, :email)
+  end
+
+  def generate_random_color
+    "##{SecureRandom.hex(3)}"
   end
 
 end

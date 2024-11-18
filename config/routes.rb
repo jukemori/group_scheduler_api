@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       resources :users
       resources :calendars do
         member do
+          get :users
           post :invite
           post :accept_invitation
           post :reject_invitation

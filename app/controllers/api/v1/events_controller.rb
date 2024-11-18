@@ -36,7 +36,7 @@ class Api::V1::EventsController < ApplicationController
       params[:added].each do |event_data|
         transformed_data = transform_keys_to_snake_case(event_data)
         event = Event.new(event_params(transformed_data))
-        event.user_id = transformed_data['user_id'] || current_user.id 
+        event.user_id = current_user.id 
         event.calendar_id = request.headers['calendar-id'] || transformed_data['calendar_id'] 
         if event.save
           render json: event

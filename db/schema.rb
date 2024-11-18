@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_17_122336) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_18_004255) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,6 +23,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_17_122336) do
     t.index ["calendar_id", "user_id"], name: "index_calendar_invitations_on_calendar_id_and_user_id", unique: true
     t.index ["calendar_id"], name: "index_calendar_invitations_on_calendar_id"
     t.index ["user_id"], name: "index_calendar_invitations_on_user_id"
+  end
+
+  create_table "calendar_notes", force: :cascade do |t|
+    t.text "content"
+    t.bigint "calendar_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["calendar_id"], name: "index_calendar_notes_on_calendar_id"
+    t.index ["user_id"], name: "index_calendar_notes_on_user_id"
   end
 
   create_table "calendars", force: :cascade do |t|
@@ -90,6 +100,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_17_122336) do
 
   add_foreign_key "calendar_invitations", "calendars"
   add_foreign_key "calendar_invitations", "users"
+  add_foreign_key "calendar_notes", "calendars"
+  add_foreign_key "calendar_notes", "users"
   add_foreign_key "events", "calendars"
   add_foreign_key "events", "users"
 end

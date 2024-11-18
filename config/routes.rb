@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users
       resources :calendars do
+        resources :calendar_notes, path: 'notes'
         member do
           get :users
           post :invite

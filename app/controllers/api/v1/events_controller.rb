@@ -38,7 +38,9 @@ class Api::V1::EventsController < ApplicationController
         event = Event.new(event_params(transformed_data))
         event.user_id = current_user.id 
         event.calendar_id = request.headers['calendar-id'] || transformed_data['calendar_id'] 
+        
         if event.save
+          create_notification('created', event)
           render json: event
         else
           render json: { message: "Error creating event: #{event.errors.full_messages.join(', ')}" }, status: :unprocessable_entity
@@ -53,8 +55,9 @@ class Api::V1::EventsController < ApplicationController
         transformed_data = transform_keys_to_snake_case(event_data)
         event = Event.find_by(id: transformed_data[:id])
         if event&.update(event_params(transformed_data))
-
+          
           event.save
+          create_notification('updated', event)
           render json: event
         else
           render json: { message: "Cannot update Event with id=#{transformed_data[:id]}" }, status: :unprocessable_entity
@@ -69,10 +72,17 @@ class Api::V1::EventsController < ApplicationController
         transformed_data = transform_keys_to_snake_case(event_data)
         event_id = transformed_data[:id] || transformed_data['id']
         event = Event.find_by(id: event_id)
-        if event&.destroy
-          render json: event
+        
+        if event
+          create_notification('deleted', event)
+          
+          if event.destroy
+            render json: event
+          else
+            render json: { message: "Cannot delete Event with id=#{event_data[:id]}" }, status: 500
+          end
         else
-          render json: { message: "Cannot delete Event with id=#{event_data[:id]}" }, status: 500
+          render json: { message: "Event with id=#{event_id} not found" }, status: 404
         end
       end
     end
@@ -106,6 +116,40 @@ class Api::V1::EventsController < ApplicationController
       key = key.to_s.underscore
       key == 'owner_id' ? 'user_id' : key
     end
+  end
+
+  def create_notification(action, event)
+    # Create notification record
+    notification = Notification.create!(
+      user: current_user,
+      calendar: event.calendar,
+      event: event,
+      action: action,
+      message: "#{current_user.nickname} #{action} event: #{event.subject}"
+    )
+
+    # Broadcast with a unique identifier for the event action
+    ActionCable.server.broadcast(
+      "calendar_#{event.calendar_id}",
+      {
+        type: 'notification',
+        notification: {
+          id: notification.id,
+          message: notification.message,
+          created_at: notification.created_at,
+          user: {
+            id: current_user.id,
+            nickname: current_user.nickname
+          },
+          event: {
+            id: event.id,
+            subject: event.subject
+          }
+        },
+        # Add a unique identifier for this specific action
+        action_id: "#{action}_#{event.id}_#{Time.current.to_i}"
+      }
+    )
   end
   
 end

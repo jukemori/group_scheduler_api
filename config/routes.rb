@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   mount_devise_token_auth_for 'User', at: 'api/v1/auth'
+  mount ActionCable.server => '/cable'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   namespace :api do
     namespace :v1 do
@@ -11,6 +12,7 @@ Rails.application.routes.draw do
           post :invite
           post :accept_invitation
           post :reject_invitation
+          get :notifications
         end
       end
       resources :calendar_invitations, only: [:index]

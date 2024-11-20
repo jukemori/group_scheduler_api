@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_18_004255) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_20_050945) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -72,6 +72,24 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_004255) do
     t.index ["user_id"], name: "index_events_on_user_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "calendar_id", null: false
+    t.bigint "event_id", null: false
+    t.bigint "calendar_note_id", null: false
+    t.bigint "calendar_invitation_id", null: false
+    t.string "action"
+    t.string "message"
+    t.boolean "read", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["calendar_id"], name: "index_notifications_on_calendar_id"
+    t.index ["calendar_invitation_id"], name: "index_notifications_on_calendar_invitation_id"
+    t.index ["calendar_note_id"], name: "index_notifications_on_calendar_note_id"
+    t.index ["event_id"], name: "index_notifications_on_event_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "provider", default: "email", null: false
     t.string "uid", default: "", null: false
@@ -104,4 +122,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_004255) do
   add_foreign_key "calendar_notes", "users"
   add_foreign_key "events", "calendars"
   add_foreign_key "events", "users"
+  add_foreign_key "notifications", "calendar_invitations"
+  add_foreign_key "notifications", "calendar_notes"
+  add_foreign_key "notifications", "calendars"
+  add_foreign_key "notifications", "events"
+  add_foreign_key "notifications", "users"
 end

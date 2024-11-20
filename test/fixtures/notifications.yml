@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  calendar: one
+  event: one
+  calendar_note: one
+  calendar_invitation: one
+  action: MyString
+  message: MyString
+  read: false
+
+two:
+  user: two
+  calendar: two
+  event: two
+  calendar_note: two
+  calendar_invitation: two
+  action: MyString
+  message: MyString
+  read: false

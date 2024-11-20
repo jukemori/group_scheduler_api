@@ -7,4 +7,16 @@ class Notification < ApplicationRecord
 
   validates :action, presence: true
   validates :message, presence: true
+
+  scope :unread, -> { where(read: false) }
+  scope :read, -> { where(read: true) }
+  scope :recent, -> { order(created_at: :desc) }
+
+  def mark_as_read!
+    update!(read: true)
+  end
+
+  def mark_as_unread!
+    update!(read: false)
+  end
 end

@@ -4,5 +4,6 @@ class Calendar < ApplicationRecord
   has_many :calendar_invitations, dependent: :destroy
   has_many :invited_users, through: :calendar_invitations, source: :user
   has_many :calendar_notes, dependent: :destroy
+  has_many :notifications, dependent: :destroy
   validates :name, presence: true
 end

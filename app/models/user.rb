@@ -14,6 +14,8 @@ class User < ApplicationRecord
   has_many :pending_calendar_invitations, -> { where(status: :pending) }, 
            class_name: 'CalendarInvitation'
 
+  has_many :notifications, dependent: :destroy
+
   def pending_calendar_invites
     calendar_invitations.pending
   end

@@ -75,9 +75,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_20_050945) do
   create_table "notifications", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "calendar_id", null: false
-    t.bigint "event_id", null: false
-    t.bigint "calendar_note_id", null: false
-    t.bigint "calendar_invitation_id", null: false
+    t.bigint "event_id"
+    t.bigint "calendar_note_id"
+    t.bigint "calendar_invitation_id"
     t.string "action"
     t.string "message"
     t.boolean "read", default: false

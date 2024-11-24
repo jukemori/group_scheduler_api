@@ -1,4 +1,3 @@
-
 class Api::V1::CalendarNotesController < ApplicationController
   include DeviseTokenAuth::Concerns::SetUserByToken
   before_action :authenticate_user!
@@ -27,6 +26,7 @@ class Api::V1::CalendarNotesController < ApplicationController
     @note.user = current_user
 
     if @note.save
+      create_notification('created', @note)
       render json: @note, status: :created
     else
       render json: @note.errors, status: :unprocessable_entity
@@ -35,6 +35,7 @@ class Api::V1::CalendarNotesController < ApplicationController
 
   def update
     if @note.update(note_params)
+      create_notification('updated', @note)
       render json: @note
     else
       render json: @note.errors, status: :unprocessable_entity
@@ -42,6 +43,7 @@ class Api::V1::CalendarNotesController < ApplicationController
   end
 
   def destroy
+    create_notification('deleted', @note)
     @note.destroy
     head :no_content
   end
@@ -58,6 +60,42 @@ class Api::V1::CalendarNotesController < ApplicationController
 
   def note_params
     params.require(:calendar_note).permit(:content)
+  end
+
+  def create_notification(action, note)
+    users_to_notify = note.calendar.users
+
+    notification = Notification.create!(
+      user: current_user,
+      calendar: note.calendar,
+      calendar_note: note,
+      action: action,
+      message: "#{current_user.nickname} #{action} note: #{note.content.truncate(30)}"
+    )
+
+    users_to_notify.each do |user|
+      channel = "user_#{user.id}_notifications"
+      payload = {
+        type: 'notification',
+        notification: {
+          id: notification.id,
+          message: notification.message,
+          created_at: notification.created_at,
+          calendar_id: note.calendar_id,
+          user: {
+            id: current_user.id,
+            nickname: current_user.nickname
+          },
+          note: {
+            id: note.id,
+            content: note.content.truncate(30)
+          }
+        },
+        action_id: "#{action}_note_#{note.id}_#{Time.current.to_i}"
+      }
+      
+      ActionCable.server.broadcast(channel, payload)
+    end
   end
 end
 

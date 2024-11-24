@@ -121,15 +121,15 @@ class Api::V1::EventsController < ApplicationController
   def create_notification(action, event)
     users_to_notify = event.calendar.users
 
-    users_to_notify.each do |user|
-      notification = Notification.create!(
-        user: user,
-        calendar: event.calendar,
-        event: event,
-        action: action,
-        message: "#{current_user.nickname} #{action} event: #{event.subject}"
-      )
+    notification = Notification.create!(
+      user: current_user,
+      calendar: event.calendar,
+      event: event,
+      action: action,
+      message: "#{current_user.nickname} #{action} event: #{event.subject}"
+    )
 
+    users_to_notify.each do |user|
       channel = "user_#{user.id}_notifications"
       payload = {
         type: 'notification',

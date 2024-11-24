@@ -119,24 +119,25 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def create_notification(action, event)
-    # Create notification record
-    notification = Notification.create!(
-      user: current_user,
-      calendar: event.calendar,
-      event: event,
-      action: action,
-      message: "#{current_user.nickname} #{action} event: #{event.subject}"
-    )
+    users_to_notify = event.calendar.users
 
-    # Broadcast with a unique identifier for the event action
-    ActionCable.server.broadcast(
-      "calendar_#{event.calendar_id}",
-      {
+    users_to_notify.each do |user|
+      notification = Notification.create!(
+        user: user,
+        calendar: event.calendar,
+        event: event,
+        action: action,
+        message: "#{current_user.nickname} #{action} event: #{event.subject}"
+      )
+
+      channel = "user_#{user.id}_notifications"
+      payload = {
         type: 'notification',
         notification: {
           id: notification.id,
           message: notification.message,
           created_at: notification.created_at,
+          calendar_id: event.calendar_id,
           user: {
             id: current_user.id,
             nickname: current_user.nickname
@@ -146,10 +147,11 @@ class Api::V1::EventsController < ApplicationController
             subject: event.subject
           }
         },
-        # Add a unique identifier for this specific action
         action_id: "#{action}_#{event.id}_#{Time.current.to_i}"
       }
-    )
+      
+      ActionCable.server.broadcast(channel, payload)
+    end
   end
   
 end

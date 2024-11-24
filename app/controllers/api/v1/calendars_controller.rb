@@ -118,7 +118,7 @@ class Api::V1::CalendarsController < ApplicationController
   end
 
   def notifications
-    @notifications = @calendar.notifications.recent.limit(50)
+    @notifications = @calendar.notifications.recent.limit(5)
     render json: @notifications, include: {
       user: { only: [:id, :nickname] },
       event: { only: [:id, :subject] }

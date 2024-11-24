@@ -54,6 +54,7 @@ class Api::V1::CalendarsController < ApplicationController
     )
     
     if invitation.save
+      create_notification('sent', invitation)
       render json: { message: 'Invitation sent successfully' }, status: :ok
     else
       render json: { error: invitation.errors.full_messages }, status: :unprocessable_entity
@@ -78,6 +79,7 @@ class Api::V1::CalendarsController < ApplicationController
     ActiveRecord::Base.transaction do
       invitation.update!(status: :accepted)
       invitation.calendar.users << current_user unless invitation.calendar.users.include?(current_user)
+      create_notification('accepted', invitation)
     end
 
     render json: { message: 'Calendar invitation accepted' }, status: :ok
@@ -99,6 +101,7 @@ class Api::V1::CalendarsController < ApplicationController
     end
 
     invitation.rejected!
+    create_notification('rejected', invitation)
     render json: { message: 'Calendar invitation rejected' }, status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
@@ -139,6 +142,54 @@ class Api::V1::CalendarsController < ApplicationController
 
   def generate_random_color
     "##{SecureRandom.hex(3)}"
+  end
+
+  def create_notification(action, invitation)
+    message = case action
+    when 'sent'
+      "#{current_user.nickname} sent a calendar invitation to #{invitation.user.email}"
+    when 'accepted'
+      "#{current_user.nickname} accepted the invitation to join #{invitation.calendar.name}"
+    when 'rejected'
+      "#{current_user.nickname} rejected the invitation to join #{invitation.calendar.name}"
+    end
+
+    notification = Notification.create!(
+      user: current_user,
+      calendar: invitation.calendar,
+      calendar_invitation: invitation,
+      action: action,
+      message: message
+    )
+
+    recipient_id = action == 'sent' ? invitation.user_id : invitation.calendar.user_ids
+    
+    payload = {
+      type: 'notification',
+      notification: {
+        id: notification.id,
+        message: notification.message,
+        created_at: notification.created_at,
+        calendar_id: invitation.calendar_id,
+        user: {
+          id: current_user.id,
+          nickname: current_user.nickname
+        },
+        invitation: {
+          id: invitation.id,
+          calendar_name: invitation.calendar.name
+        }
+      },
+      action_id: "invitation_#{invitation.id}_#{Time.current.to_i}"
+    }
+
+    if action == 'sent'
+      ActionCable.server.broadcast("user_#{recipient_id}_notifications", payload)
+    else
+      recipient_id.each do |user_id|
+        ActionCable.server.broadcast("user_#{user_id}_notifications", payload)
+      end
+    end
   end
 
 end

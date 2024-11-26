@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   namespace :api do
     namespace :v1 do
-      resources :users
+      resources :users do
+        collection do
+          get :notifications
+        end
+      end
       resources :calendars do
         resources :calendar_notes, path: 'notes'
         member do
@@ -12,7 +16,6 @@ Rails.application.routes.draw do
           post :invite
           post :accept_invitation
           post :reject_invitation
-          get :notifications
         end
       end
       resources :calendar_invitations, only: [:index]

@@ -120,14 +120,6 @@ class Api::V1::CalendarsController < ApplicationController
     render json: users_data
   end
 
-  def notifications
-    @notifications = @calendar.notifications.recent.limit(5)
-    render json: @notifications, include: {
-      user: { only: [:id, :nickname] },
-      event: { only: [:id, :subject] }
-    }
-  end
-
   private
 
   def set_calendar

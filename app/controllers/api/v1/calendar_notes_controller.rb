@@ -63,7 +63,7 @@ class Api::V1::CalendarNotesController < ApplicationController
   end
 
   def create_notification(action, note)
-    users_to_notify = note.calendar.users
+    users_to_notify = note.calendar.users.where.not(id: current_user.id)
 
     notification = Notification.create!(
       user: current_user,

@@ -119,7 +119,7 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def create_notification(action, event)
-    users_to_notify = event.calendar.users
+    users_to_notify = event.calendar.users.where.not(id: current_user.id)
 
     notification = Notification.create!(
       user: current_user,

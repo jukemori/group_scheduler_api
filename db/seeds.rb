@@ -11,10 +11,12 @@
 # db/seeds.rb
 
 # Clean up existing records
+Notification.destroy_all
+CalendarInvitation.destroy_all
+CalendarNote.destroy_all
 Event.destroy_all
 User.destroy_all
 Calendar.destroy_all
-CalendarNote.destroy_all
 
 # Create Users
 users = User.create!([

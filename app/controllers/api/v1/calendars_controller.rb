@@ -1,7 +1,7 @@
 class Api::V1::CalendarsController < ApplicationController
   include DeviseTokenAuth::Concerns::SetUserByToken
   before_action :authenticate_user!
-  before_action :set_calendar, only: [:show, :update, :destroy, :invite, :notifications]
+  before_action :set_calendar, only: [:show, :update, :destroy, :invite]
 
   def index
     @calendars = current_user.calendars

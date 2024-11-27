@@ -38,11 +38,12 @@ class Api::V1::UsersController < ApplicationController
     head :no_content
   end
 
-  def notifications
+  def notifications    
     @notifications = Notification.joins(:calendar)
                                .where(calendars: { id: current_user.calendars.pluck(:id) })
+                               .where.not(user_id: current_user.id)
                                .recent
-                               .limit(10)
+                               .limit(10)                               
 
     render json: @notifications, include: {
       user: { only: [:id, :nickname] },

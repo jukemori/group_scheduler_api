@@ -52,3 +52,4 @@ gem 'devise_token_auth'
 gem 'omniauth', '~> 2.0'
 
 gem "dotenv-rails"
+gem "cloudinary"

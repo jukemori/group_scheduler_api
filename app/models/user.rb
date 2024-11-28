@@ -8,6 +8,10 @@ class User < ApplicationRecord
   before_create :skip_confirmation!    
   
   has_one_attached :photo
+
+  def photo_url
+    photo.attached? ? photo.url : nil
+  end
   
   has_and_belongs_to_many :calendars
   has_many :events, foreign_key: 'user_id', dependent: :destroy

@@ -9,7 +9,7 @@
 #   end
 
 # db/seeds.rb
-
+require 'open-uri'
 # Clean up existing records
 Notification.destroy_all
 CalendarInvitation.destroy_all
@@ -18,7 +18,7 @@ Event.destroy_all
 User.destroy_all
 Calendar.destroy_all
 
-# Create Users
+# Create Users with photos
 users = User.create!([
   { 
     name: 'John Doe', 
@@ -41,6 +41,17 @@ users = User.create!([
     color: '#33FF57' 
   }
 ])
+
+# Attach photos to users
+users.first.photo.attach(
+  io: URI.open('https://www.blackpast.org/wp-content/uploads/mike-tyson-scaled.jpg'),
+  filename: 'john.jpg'
+)
+
+users.second.photo.attach(
+  io: URI.open('https://i.pinimg.com/originals/12/a1/c4/12a1c40426b011b5aaa8d54914067295.jpg'),
+  filename: 'jane.jpg'
+)
 
 # Create Calendars
 john_calendars = Calendar.create!([

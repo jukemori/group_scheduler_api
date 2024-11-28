@@ -13,7 +13,7 @@ class Api::V1::UsersController < ApplicationController
       calendars: {
         include: :events
       }
-    })
+    }, methods: [:photo_url])
   end
 
   def create
@@ -60,7 +60,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :nickname, :color, :email, :password, :password_confirmation)
+    params.require(:user).permit(:name, :nickname, :color, :email, :password, :password_confirmation, :photo)
   end
 
   def authenticate_user!

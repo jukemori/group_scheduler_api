@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       resources :calendar_invitations, only: [:index]
       post 'events', to: 'events#crud_actions'
       get 'user', to: 'users#show'
+      patch 'user', to: 'users#update'
     end
   end
 

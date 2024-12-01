@@ -146,12 +146,21 @@ class Api::V1::CalendarsController < ApplicationController
       "#{current_user.nickname} rejected the invitation to join #{invitation.calendar.name}"
     end
 
+    notification_type = case action
+    when 'sent'
+      'invitation_sent'
+    when 'accepted'
+      'invitation_accepted'
+    when 'rejected'
+      'invitation_rejected'
+    end
+
     notification = Notification.create!(
       user: current_user,
       calendar: invitation.calendar,
       calendar_invitation: invitation,
       action: action,
-      notification_type: 'invitation',
+      notification_type: notification_type,
       message: message
     )
 

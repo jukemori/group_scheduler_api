@@ -126,6 +126,7 @@ class Api::V1::EventsController < ApplicationController
       calendar: event.calendar,
       event: event,
       action: action,
+      notification_type: 'event',
       message: "#{current_user.nickname} #{action} event: #{event.subject}"
     )
 
@@ -138,6 +139,7 @@ class Api::V1::EventsController < ApplicationController
           message: notification.message,
           created_at: notification.created_at,
           calendar_id: event.calendar_id,
+          notification_type: notification.notification_type,
           user: {
             id: current_user.id,
             nickname: current_user.nickname

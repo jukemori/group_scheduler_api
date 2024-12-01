@@ -70,6 +70,7 @@ class Api::V1::CalendarNotesController < ApplicationController
       calendar: note.calendar,
       calendar_note: note,
       action: action,
+      notification_type: 'note',
       message: "#{current_user.nickname} #{action} note: #{note.content.truncate(30)}"
     )
 
@@ -82,6 +83,7 @@ class Api::V1::CalendarNotesController < ApplicationController
           message: notification.message,
           created_at: notification.created_at,
           calendar_id: note.calendar_id,
+          notification_type: notification.notification_type,
           user: {
             id: current_user.id,
             nickname: current_user.nickname

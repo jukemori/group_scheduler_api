@@ -151,6 +151,7 @@ class Api::V1::CalendarsController < ApplicationController
       calendar: invitation.calendar,
       calendar_invitation: invitation,
       action: action,
+      notification_type: 'invitation',
       message: message
     )
 
@@ -163,6 +164,7 @@ class Api::V1::CalendarsController < ApplicationController
         message: notification.message,
         created_at: notification.created_at,
         calendar_id: invitation.calendar_id,
+        notification_type: notification.notification_type,
         user: {
           id: current_user.id,
           nickname: current_user.nickname

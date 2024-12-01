@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_28_105001) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_30_234715) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -111,6 +111,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_28_105001) do
     t.boolean "read", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "notification_type"
     t.index ["calendar_id"], name: "index_notifications_on_calendar_id"
     t.index ["calendar_invitation_id"], name: "index_notifications_on_calendar_invitation_id"
     t.index ["calendar_note_id"], name: "index_notifications_on_calendar_note_id"

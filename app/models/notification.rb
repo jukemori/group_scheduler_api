@@ -7,6 +7,8 @@ class Notification < ApplicationRecord
 
   validates :action, presence: true
   validates :message, presence: true
+  validates :notification_type, presence: true
+  validates :notification_type, inclusion: { in: %w[event note invitation] }
 
   scope :unread, -> { where(read: false) }
   scope :read, -> { where(read: true) }

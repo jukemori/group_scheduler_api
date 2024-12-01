@@ -155,7 +155,11 @@ class Api::V1::CalendarsController < ApplicationController
       message: message
     )
 
-    recipient_id = action == 'sent' ? invitation.user_id : invitation.calendar.user_ids
+    recipient_ids = if action == 'sent'
+      [invitation.user_id] 
+    else
+      invitation.calendar.user_ids - [current_user.id]  
+    end
     
     payload = {
       type: 'notification',
@@ -177,12 +181,8 @@ class Api::V1::CalendarsController < ApplicationController
       action_id: "invitation_#{invitation.id}_#{Time.current.to_i}"
     }
 
-    if action == 'sent'
-      ActionCable.server.broadcast("user_#{recipient_id}_notifications", payload)
-    else
-      recipient_id.each do |user_id|
-        ActionCable.server.broadcast("user_#{user_id}_notifications", payload)
-      end
+    recipient_ids.each do |user_id|
+      ActionCable.server.broadcast("user_#{user_id}_notifications", payload)
     end
   end
 

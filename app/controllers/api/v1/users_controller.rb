@@ -46,7 +46,7 @@ class Api::V1::UsersController < ApplicationController
                                .limit(10)                               
 
     render json: @notifications, include: {
-      user: { only: [:id, :nickname] },
+      user: { only: [:id, :nickname], methods: [:photo_url] },
       event: { only: [:id, :subject] },
       calendar: { only: [:id, :name] },
       calendar_note: { only: [:id, :content] },

@@ -142,7 +142,8 @@ class Api::V1::EventsController < ApplicationController
           notification_type: notification.notification_type,
           user: {
             id: current_user.id,
-            nickname: current_user.nickname
+            nickname: current_user.nickname,
+            photo_url: current_user.photo_url
           },
           event: {
             id: event.id,

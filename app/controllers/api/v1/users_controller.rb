@@ -49,7 +49,8 @@ class Api::V1::UsersController < ApplicationController
       user: { only: [:id, :nickname] },
       event: { only: [:id, :subject] },
       calendar: { only: [:id, :name] },
-      calendar_note: { only: [:id, :content] }
+      calendar_note: { only: [:id, :content] },
+      calendar_invitation: { only: [:id, :status] }
     }
   end
 

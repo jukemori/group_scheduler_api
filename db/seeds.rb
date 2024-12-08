@@ -76,24 +76,24 @@ john_calendars.each do |calendar|
     { 
       subject: 'Morning Meeting', 
       description: 'Daily standup', 
-      start_time: '2024-11-01T09:00:00.000Z',
-      end_time: '2024-11-01T10:00:00.000Z',
+      start_time: Time.current.beginning_of_month + 1.day + 9.hours,
+      end_time: Time.current.beginning_of_month + 1.day + 10.hours,
       user: users.first, 
       calendar: calendar 
     },
     { 
       subject: 'Project Review', 
       description: 'Monthly review', 
-      start_time: '2024-11-15T14:00:00.000Z',
-      end_time: '2024-11-15T16:00:00.000Z',
+      start_time: Time.current.beginning_of_month + 15.days + 14.hours,
+      end_time: Time.current.beginning_of_month + 15.days + 16.hours,
       user: users.first, 
       calendar: calendar 
     },
     { 
       subject: 'Team Building', 
       description: 'Team activity', 
-      start_time: '2024-11-20T13:00:00.000Z',
-      end_time: '2024-11-20T17:00:00.000Z',
+      start_time: Time.current.beginning_of_month + 20.days + 13.hours,
+      end_time: Time.current.beginning_of_month + 20.days + 17.hours,
       user: users.first, 
       calendar: calendar 
     }
@@ -106,24 +106,24 @@ jane_calendars.each do |calendar|
     { 
       subject: 'Study Session', 
       description: 'React basics', 
-      start_time: '2024-11-05T10:00:00.000Z',
-      end_time: '2024-11-05T12:00:00.000Z',
+      start_time: Time.current.beginning_of_month + 5.days + 10.hours,
+      end_time: Time.current.beginning_of_month + 5.days + 12.hours,
       user: users.second, 
       calendar: calendar 
     },
     { 
       subject: 'Gym Session', 
       description: 'Cardio day', 
-      start_time: '2024-11-10T07:00:00.000Z',
-      end_time: '2024-11-10T09:00:00.000Z',
+      start_time: Time.current.beginning_of_month + 10.days + 7.hours,
+      end_time: Time.current.beginning_of_month + 10.days + 9.hours,
       user: users.second, 
       calendar: calendar 
     },
     { 
       subject: 'Coffee Meetup', 
       description: 'Networking event', 
-      start_time: '2024-11-25T15:00:00.000Z',
-      end_time: '2024-11-25T16:30:00.000Z',
+      start_time: Time.current.beginning_of_month + 25.days + 15.hours,
+      end_time: Time.current.beginning_of_month + 25.days + 16.hours + 30.minutes,
       user: users.second, 
       calendar: calendar 
     }

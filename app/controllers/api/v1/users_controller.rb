@@ -39,11 +39,18 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def notifications    
-    @notifications = Notification.joins(:calendar)
-                               .where(calendars: { id: current_user.calendars.pluck(:id) })
-                               .where.not(user_id: current_user.id)
-                               .recent
-                               .limit(10)                               
+    calendar_notifications = Notification.joins(:calendar)
+                                      .where(calendars: { id: current_user.calendars.pluck(:id) })
+                                      .where.not(user_id: current_user.id)
+
+    invitation_notifications = Notification.joins(:calendar_invitation)
+                                        .where(calendar_invitations: { user_id: current_user.id, status: :pending })
+                                        .where(action: 'sent')
+
+    @notifications = (calendar_notifications + invitation_notifications)
+                      .sort_by(&:created_at)
+                      .reverse
+                      .first(10)
 
     render json: @notifications, include: {
       user: { only: [:id, :nickname], methods: [:photo_url] },

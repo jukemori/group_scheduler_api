@@ -71,7 +71,7 @@ class Api::V1::CalendarNotesController < ApplicationController
       calendar_note: note,
       action: action,
       notification_type: 'note',
-      message: "#{current_user.nickname} #{action} note: #{note.content.truncate(30)}"
+      message: "#{current_user.nickname} #{action} note: #{note.content.truncate(30)} from #{note.calendar.name}"
     )
 
     users_to_notify.each do |user|
@@ -86,7 +86,8 @@ class Api::V1::CalendarNotesController < ApplicationController
           notification_type: notification.notification_type,
           user: {
             id: current_user.id,
-            nickname: current_user.nickname
+            nickname: current_user.nickname,
+            photo_url: current_user.photo_url
           },
           note: {
             id: note.id,

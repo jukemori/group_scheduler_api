@@ -127,7 +127,7 @@ class Api::V1::EventsController < ApplicationController
       event: event,
       action: action,
       notification_type: 'event',
-      message: "#{current_user.nickname} #{action} event: #{event.subject}"
+      message: "#{current_user.nickname} #{action} event: #{event.subject} from #{event.calendar.name}"
     )
 
     users_to_notify.each do |user|

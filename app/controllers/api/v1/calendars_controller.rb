@@ -139,7 +139,7 @@ class Api::V1::CalendarsController < ApplicationController
   def create_notification(action, invitation)
     message = case action
     when 'sent'
-      "#{current_user.nickname} sent a calendar invitation to you"
+      "#{current_user.nickname} sent a calendar invitation to join #{invitation.calendar.name}"
     when 'accepted'
       "#{current_user.nickname} accepted the invitation to join #{invitation.calendar.name}"
     when 'rejected'
@@ -180,7 +180,8 @@ class Api::V1::CalendarsController < ApplicationController
         notification_type: notification.notification_type,
         user: {
           id: current_user.id,
-          nickname: current_user.nickname
+          nickname: current_user.nickname,
+          photo_url: current_user.photo_url
         },
         invitation: {
           id: invitation.id,

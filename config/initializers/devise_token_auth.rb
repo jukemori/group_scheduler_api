@@ -19,6 +19,7 @@ DeviseTokenAuth.setup do |config|
   config.token_lifespan = 2.weeks
   config.batch_request_buffer_throttle = 5.seconds
   config.enable_standard_devise_support = true
+  config.param_whitelist = [:sign_up, [:email, :password, :password_confirmation, :name, :nickname]]
 
   # Sets the max number of concurrent devices per user, which is 10 by default.
   # After this limit is reached, the oldest tokens will be removed.

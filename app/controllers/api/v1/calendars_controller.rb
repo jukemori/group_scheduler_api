@@ -113,7 +113,8 @@ class Api::V1::CalendarsController < ApplicationController
       {
         OwnerText: user.nickname,
         Id: user.id,
-        OwnerColor: user.color 
+        OwnerColor: user.color,
+        OwnerPhotoUrl: user.photo_url
       }
     end
     

@@ -15,7 +15,8 @@ class Api::V1::CalendarNotesController < ApplicationController
         user: {
           id: note.user.id,
           nickname: note.user.nickname,
-          email: note.user.email
+          email: note.user.email,
+          photoUrl: note.user.photo_url
         }
       }
     }

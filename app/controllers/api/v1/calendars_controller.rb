@@ -90,6 +90,7 @@ class Api::V1::CalendarsController < ApplicationController
     ActiveRecord::Base.transaction do
       invitation.update!(status: :accepted)
       invitation.calendar.users << current_user unless invitation.calendar.users.include?(current_user)
+      current_user.notifications.where(calendar_id: params[:id], notification_type: 'invitation_sent').destroy_all
       create_notification('accepted', invitation)
     end
 
@@ -111,8 +112,12 @@ class Api::V1::CalendarsController < ApplicationController
       return
     end
 
-    invitation.rejected!
-    create_notification('rejected', invitation)
+    ActiveRecord::Base.transaction do
+      invitation.rejected!
+      current_user.notifications.where(calendar_id: params[:id], notification_type: 'invitation_sent').destroy_all
+      create_notification('rejected', invitation)
+    end
+    
     render json: { message: 'Calendar invitation rejected' }, status: :ok
   rescue => e
     render json: { error: e.message }, status: :unprocessable_entity

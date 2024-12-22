@@ -53,6 +53,12 @@ class Api::V1::CalendarsController < ApplicationController
       return
     end
 
+    existing_invitation = @calendar.calendar_invitations.find_by(user: @user, status: :pending)
+    if existing_invitation
+      render json: { error: 'User already has a pending invitation' }, status: :unprocessable_entity
+      return
+    end
+
     invitation = @calendar.calendar_invitations.new(
       user: @user,
       status: :pending
@@ -134,7 +140,11 @@ class Api::V1::CalendarsController < ApplicationController
       return
     end
 
-    @calendar.users.delete(current_user)
+    ActiveRecord::Base.transaction do
+      @calendar.users.delete(current_user)
+      @calendar.calendar_invitations.where(user: current_user).destroy_all
+    end
+
     render json: { message: 'Successfully left the calendar' }, status: :ok
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Calendar not found' }, status: :not_found

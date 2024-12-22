@@ -14,6 +14,7 @@ class Api::V1::CalendarsController < ApplicationController
 
   def create
     @calendar = Calendar.new(calendar_params)
+    @calendar.creator_id = current_user.id
     if @calendar.save
       @calendar.users << current_user
       render json: @calendar, status: :created
@@ -31,8 +32,12 @@ class Api::V1::CalendarsController < ApplicationController
   end
 
   def destroy
-    @calendar.destroy
-    head :no_content
+    if @calendar.creator_id == current_user.id
+      @calendar.destroy
+      head :no_content
+    else
+      render json: { error: 'Only the calendar creator can delete this calendar' }, status: :forbidden
+    end
   end
 
   def invite
@@ -119,6 +124,22 @@ class Api::V1::CalendarsController < ApplicationController
     end
     
     render json: users_data
+  end
+
+  def leave
+    @calendar = Calendar.find(params[:id])
+    
+    if @calendar.creator_id == current_user.id
+      render json: { error: 'Calendar creator cannot leave the calendar' }, status: :forbidden
+      return
+    end
+
+    @calendar.users.delete(current_user)
+    render json: { message: 'Successfully left the calendar' }, status: :ok
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Calendar not found' }, status: :not_found
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private

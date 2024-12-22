@@ -16,6 +16,7 @@ Rails.application.routes.draw do
           post :invite
           post :accept_invitation
           post :reject_invitation
+          delete :leave
         end
       end
       resources :calendar_invitations, only: [:index]

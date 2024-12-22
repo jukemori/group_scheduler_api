@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_22_022717) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_22_024820) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -153,6 +153,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_22_022717) do
   add_foreign_key "calendar_invitations", "users"
   add_foreign_key "calendar_notes", "calendars"
   add_foreign_key "calendar_notes", "users"
+  add_foreign_key "calendars", "users", column: "creator_id"
   add_foreign_key "events", "calendars"
   add_foreign_key "events", "users"
   add_foreign_key "notifications", "calendar_invitations"

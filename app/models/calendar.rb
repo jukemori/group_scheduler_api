@@ -5,5 +5,6 @@ class Calendar < ApplicationRecord
   has_many :invited_users, through: :calendar_invitations, source: :user
   has_many :calendar_notes, dependent: :destroy
   has_many :notifications, dependent: :destroy
+  belongs_to :creator, class_name: 'User'
   validates :name, presence: true
 end

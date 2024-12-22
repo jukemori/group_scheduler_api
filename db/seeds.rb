@@ -53,17 +53,17 @@ users.second.photo.attach(
   filename: 'jane.jpg'
 )
 
-# Create Calendars
+# Create Calendars with creator_id
 john_calendars = Calendar.create!([
-  { name: 'Work Calendar', description: 'Calendar for work-related events' },
-  { name: 'Personal Calendar', description: 'Calendar for personal events' },
-  { name: 'Family Calendar', description: 'Calendar for family events' }
+  { name: 'Work Calendar', description: 'Calendar for work-related events', creator_id: users.first.id },
+  { name: 'Personal Calendar', description: 'Calendar for personal events', creator_id: users.first.id },
+  { name: 'Family Calendar', description: 'Calendar for family events', creator_id: users.first.id }
 ])
 
 jane_calendars = Calendar.create!([
-  { name: 'Study Calendar', description: 'Calendar for study schedule' },
-  { name: 'Fitness Calendar', description: 'Calendar for workout routine' },
-  { name: 'Social Calendar', description: 'Calendar for social events' }
+  { name: 'Study Calendar', description: 'Study schedule', creator_id: users.second.id },
+  { name: 'Fitness Calendar', description: 'Calendar for workout routine', creator_id: users.second.id },
+  { name: 'Social Calendar', description: 'Calendar for social events', creator_id: users.second.id }
 ])
 
 # Link Users to Calendars

@@ -53,3 +53,6 @@ gem 'omniauth', '~> 2.0'
 
 gem "dotenv-rails"
 gem "cloudinary"
+
+gem 'omniauth-google-oauth2'
+gem 'omniauth-rails_csrf_protection'

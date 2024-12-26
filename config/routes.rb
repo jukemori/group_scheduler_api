@@ -1,9 +1,16 @@
 Rails.application.routes.draw do
-  mount_devise_token_auth_for 'User', at: 'api/v1/auth'
+  mount_devise_token_auth_for 'User', at: 'api/v1/auth', controllers: {
+    omniauth_callbacks: 'api/v1/omniauth_callbacks'
+  }
+
   mount ActionCable.server => '/cable'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   namespace :api do
     namespace :v1 do
+      namespace :auth do
+        get 'google_oauth2/callback', to: 'omniauth_callbacks#omniauth_success'
+        post 'google_oauth2/callback', to: 'omniauth_callbacks#omniauth_success'
+      end
       resources :users do
         collection do
           get :notifications

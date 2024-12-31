@@ -33,14 +33,12 @@ Rails.application.configure do
   config.active_storage.service = :cloudinary
 
   # Mount Action Cable outside main process or domain.
-  # config.action_cable.mount_path = nil
-  # config.action_cable.url = "wss://example.com/cable"
-  # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
-  # config.action_cable.url = "wss://your-production-domain.com/cable"
-  # config.action_cable.allowed_request_origins = [
-  #   "https://your-frontend-domain.com",
-  #   "https://your-production-domain.com"
-  # ]
+  config.action_cable.mount_path = '/cable'
+  config.action_cable.url = 'wss://your-backend-domain.com/cable'  # Replace with your backend domain
+  config.action_cable.allowed_request_origins = [
+    'https://mingletime.vercel.app',
+    /https:\/\/mingletime\.vercel\.app.*/
+  ]
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.

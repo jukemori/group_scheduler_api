@@ -112,6 +112,92 @@ The application uses PostgreSQL with the following main models:
 - Calendar Invitations
 - Notifications
 
+![alt text](image.png)
+
+
+## Database Schema & Model Relationships
+
+### Core Models
+
+#### Users
+- Central model for user authentication and profile management
+- Attributes: email, name, nickname, color, authentication tokens
+- Relationships:
+  - Has many calendars (through calendars_users)
+  - Has many events
+  - Has many calendar_notes
+  - Has many calendar_invitations
+  - Has many notifications
+  - Can be a creator of multiple calendars (creator_id)
+
+#### Calendars
+- Represents a shared calendar space
+- Attributes: name, description, creator_id
+- Relationships:
+  - Belongs to a creator (User)
+  - Has many users (through calendars_users)
+  - Has many events
+  - Has many calendar_notes
+  - Has many calendar_invitations
+  - Has many notifications
+
+#### Events
+- Represents calendar events/appointments
+- Attributes: subject, description, start_time, end_time, location, recurrence settings
+- Relationships:
+  - Belongs to a calendar
+  - Belongs to a user (creator)
+  - Has many notifications
+
+### Joining Tables & Supporting Models
+
+#### calendars_users (Join Table)
+- Manages many-to-many relationship between users and calendars
+- Columns:
+  - user_id (foreign key)
+  - calendar_id (foreign key)
+- Enables users to be members of multiple calendars and calendars to have multiple users
+
+#### Calendar Invitations
+- Manages calendar sharing/invitation system
+- Attributes: status (pending/accepted/rejected)
+- Relationships:
+  - Belongs to a calendar
+  - Belongs to a user
+  - Has many notifications
+
+#### Calendar Notes
+- Enables collaboration through shared notes within calendars
+- Attributes: content
+- Relationships:
+  - Belongs to a calendar
+  - Belongs to a user (creator)
+  - Has many notifications
+
+#### Notifications
+- Handles system-wide notifications for various actions
+- Attributes: action, message, read status, notification_type
+- Relationships:
+  - Belongs to a user (recipient)
+  - Belongs to a calendar
+  - Optional belongs_to relationships:
+    - event
+    - calendar_note
+    - calendar_invitation
+
+### Active Storage Tables
+- `active_storage_blobs`: Stores file metadata
+- `active_storage_attachments`: Manages polymorphic relationships for attachments
+- `active_storage_variant_records`: Handles image variants
+
+This schema design enables:
+- Multi-user calendar collaboration
+- Event management with recurring events
+- Calendar sharing with invitation system
+- Real-time notifications
+- Note sharing within calendars
+- File attachments support
+
 ## Real-time Features
 
 The application uses Action Cable for real-time notifications:

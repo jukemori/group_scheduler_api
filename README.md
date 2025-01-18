@@ -50,17 +50,17 @@ docker compose build
 
 4. Install dependencies
 ```bash
-docker compose run --rm web bundle install
+docker compose run web bundle install
 ```
 
 5. Set up the database
 ```bash
-docker compose run --rm web rails db:create
-docker compose run --rm web rails db:migrate
-docker compose run --rm web rails db:seed
+docker compose run web bundle exec rails db:create
+docker compose run web bundle exec rails db:migrate
+docker compose run web bundle exec rails db:seed
 ```
 
-5. Start the server
+6. Start the server
 ```bash
 docker compose up
 ```

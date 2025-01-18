@@ -8,6 +8,7 @@ A Rails API backend for a group calendar scheduling application that allows user
 * Rails version: 7.1.2
 * PostgreSQL 15
 * Redis (for Action Cable)
+* Docker
 
 ## Key Features
 
@@ -20,6 +21,7 @@ A Rails API backend for a group calendar scheduling application that allows user
 - Note sharing within calendars
 - File attachments using Active Storage with Cloudinary/AWS S3
 - RESTful JSON API
+- Dockerized development environment
 
 ## Setup
 
@@ -29,30 +31,38 @@ git clone [repository-url]
 cd group-scheduler-api
 ```
 
-2. Install dependencies
-```bash
-bundle install
-```
-
-3. Set up the database
-```bash
-rails db:create
-rails db:migrate
-rails db:seed
-```
-
-
-4. Environment variables
+2. Environment variables
 Create a `.env` file in the root directory with the following variables:
 ```
 CLOUDINARY_URL=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+FRONT_END_URL=
+REDIS_URL=
+DATABASE_URL=
+```
+
+3. Docker Setup:
+
+```bash
+docker compose build
+```
+
+4. Install dependencies
+```bash
+docker compose run --rm web bundle install
+```
+
+5. Set up the database
+```bash
+docker compose run --rm web rails db:create
+docker compose run --rm web rails db:migrate
+docker compose run --rm web rails db:seed
 ```
 
 5. Start the server
 ```bash
-rails s
+docker compose up
 ```
 
 
